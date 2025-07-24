@@ -57,6 +57,8 @@ TODO: create a commandline runner that can be used to calculate a multibase mult
 2. Build the Docker image: `docker build -t urlflatine .`
 3. Run the Docker container: `docker run -p 8080:8080 urlflatine`
 
+4. Test the service by sending a request:  `curl -X POST http://localhost:8080/digest?url=https://example.com`
+
 ### Install
 
 TODO
