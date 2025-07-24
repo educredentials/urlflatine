@@ -2,9 +2,9 @@ name: Rust CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   test:
@@ -32,10 +32,10 @@ jobs:
 
       - name: Cargo check
         run: cargo check
-        
+
       - name: Check formatting
         run: cargo fmt --check
-        
+
       - name: Run tests
         run: cargo test
 
@@ -45,15 +45,22 @@ jobs:
     needs: test
     steps:
       - uses: actions/checkout@v3
-      
+
+      - name: Log in to SDP Container Registry "Harbor"
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        with:
+          registry: cr.surf.nl
+          username: ${{ secrets.CR_SURF_USERNAME }}
+          password: ${{ secrets.CR_SURF_PASSWORD }}
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      
+
       - name: Build Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
-          push: false
-          tags: urlflatine:latest
+          push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          tags: cr.surf.nl/edubadges-edubadges/edubadges/urlflatine:latest
