@@ -1,7 +1,6 @@
 use actix_web::{web, App, HttpServer, Responder, middleware::Logger};
 use multihash_codetable::{Code, MultihashDigest};
 use cid::Cid;
-use std::convert::TryFrom;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use std::env;
@@ -33,17 +32,14 @@ async fn calculate_digest(req: web::Json<DigestRequest>) -> impl Responder {
     let bytes = response.as_bytes();
     let digest = Code::Sha2_256.digest(bytes);
     let multihash = Cid::new_v1(SHA2_256, digest);
-    let digest_multibase = match Cid::try_from(multihash.to_bytes()) {
-        Ok(cid) => {
-            debug!("Generated CID: {}", cid);
-            cid.to_string()
-        },
+    let digest_multibase = match multihash.to_string_of_base(cid::multibase::Base::Base64) {
+        Ok(base64) => base64,
         Err(e) => {
-            error!("Error converting to multibase: {}", e);
-            "Error converting to multibase".to_string()
-        },
+            error!("Failed to convert multihash to base64: {}", e);
+            "Error converting multihash to base64".to_string()
+        }
     };
-    
+
     info!("Processed digest {} for URL: {}", &digest_multibase, &req.url);
     web::Json(DigestResponse { digest_multibase })
 }
