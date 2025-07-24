@@ -53,7 +53,9 @@ TODO: create a commandline runner that can be used to calculate a multibase mult
 
 ## Quickstart
 
-TODO
+1. Checkout the repository: `git clone https://github.com/yourusername/yourrepository.git`
+2. Build the Docker image: `docker build -t urlflatine .`
+3. Run the Docker container: `docker run -p 8080:8080 urlflatine`
 
 ### Install
 
