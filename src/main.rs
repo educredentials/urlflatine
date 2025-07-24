@@ -4,6 +4,7 @@ use cid::Cid;
 use std::convert::TryFrom;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
+use std::env;
 
 const SHA2_256: u64 = 0x12;
 
@@ -52,13 +53,18 @@ async fn fetch_url(client: Client, url: &str) -> Result<String, String> {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    println!("Starting server on http://127.0.0.1:8080");
+    // Get host and port from environment variables or use defaults
+    let host = env::var("LISTEN_HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
+    let port = env::var("LISTEN_PORT").unwrap_or_else(|_| "8080".to_string());
+    let bind_address = format!("{}:{}", host, port);
+    
+    println!("Starting server on http://{}", bind_address);
     
     HttpServer::new(|| {
         App::new()
             .route("/digest", web::post().to(calculate_digest))
     })
-    .bind("127.0.0.1:8080")?
+    .bind(&bind_address)?
     .run()
     .await 
 }
