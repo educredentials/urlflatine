@@ -52,9 +52,10 @@ TODO: create a commandline runner that can be used to calculate a multibase mult
 ## TODO
 
 - [ ] create a commandline runner that can be used to calculate a multibase multihash of a url.
-- [ ] allow providing hash type and algorithms on request
-- [ ] add limits to size of the file
-- [ ] add whitelist of allowed domains for URLs
+- [ ] allow providing hash type and algorithms on request. e.g. `{ "hash-function": "sha3-512" }`.
+- [ ] allow providing encoding type and request. e.g. `{ "encoding-function": "base58btc" }`.
+- [ ] add limits to size of the file. E.g. configurable with an ENV var on runtime.
+- [ ] add whitelist of allowed domains for URLs. E.g. configurable with an ENV var on runtime.
 - [ ] add caching: persist the url (and other request params) and its cached multibase multihash in KV storage and use this to avoid recalculating the multihash.
 - [ ] use the caching to send proper caching headers
 - [ ] add full CRUD for a "url+request-params" resource:
