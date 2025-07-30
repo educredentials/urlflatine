@@ -4,7 +4,21 @@ A web service that calculates a mubase multihash from a resource at a given URL
 
 Developed for [EduBadges](https://edubadges.nl) for [SURF](https://www.surf.nl) by [Bèr Kessels](https://berk.es).
 
-## Use-Case
+## Why?
+
+Verifiable Credentials can reference external resources. E.g. a link to a video-file for *evidence* or a link to an image for logo or your passport photo. To ensure this file was not tampered with during verification, we need to calculate a hash that enables **Resource Integrity** in **Verifiable Credentials**.
+
+Calculating this hash is complex, requires a broad range of standards, and  is easy to get wrong with regards to e.g. security.
+
+We therefore developed a central service that calculates this hash.
+
+## Usage
+
+```
+curl -X POST -H "Content-Type: application/json" -d '{"url": "https://example.com/videos/never_gonna_give_you_up.mp4"}' https://urlflatine.example:8080/digest
+```
+
+## Background
 
 In order to [add resource-integrity to a verifiable credential](https://www.w3.org/TR/vc-data-integrity/#resource-integrity), the issuance must add resource-integrity attributes to the credential.
 
@@ -15,8 +29,6 @@ At SURF, for EduBadges, we have several images in the credentials (OpenBadges v3
 In the spirit of our Architectural preference, we prefer small, simple, self-contained services that do one thing and do it well. Without dependency on other services.
 
 Rust is our preferred language for services.
-
-## Background
 
 Microservice receives a URL, gets the resource at that URL, calculates a digest
 of this resource, changes this into a multihash value, encodes this as multibase
