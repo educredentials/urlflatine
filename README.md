@@ -78,7 +78,26 @@ TODO
 
 ### Run
 
-TODO
+Running in Docker.
+
+Either build the image, or pull from Surf Container Registry:
+```
+docker build -t urlflatine .
+```
+
+Pull. At moment of writing, this image is still private so access is restricted to authorized users.
+```
+docker pull cr.surf.nl/edubadges-edubadges/edubadges/urlflatine:latest
+```
+
+Then run. Provide two environment variables:
+
+* `LISTEN_HOST` - The host to listen on. Defaults to `127.0.0.1`.
+* `LISTEN_PORT` - The port to listen on. Defaults to `8080`.
+
+```
+docker run -p 8080:8080 -e LISTEN_HOST=0.0.0.0 -e LISTEN_PORT=8080 urlflatine
+```
 
 ### Test
 
