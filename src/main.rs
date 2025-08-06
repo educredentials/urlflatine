@@ -1,4 +1,4 @@
-use actix_web::{middleware::Logger, web, App, HttpServer, Responder};
+use actix_web::{middleware::Logger, web, App, HttpServer, Responder, HttpResponse};
 use cid::Cid;
 use log::{debug, error, info};
 use multihash_codetable::{Code, MultihashDigest};
@@ -18,14 +18,30 @@ struct DigestResponse {
     digest_multibase: String,
 }
 
-async fn calculate_digest(req: web::Json<DigestRequest>) -> impl Responder {
+#[derive(Serialize)]
+struct ErrorResponse {
+    error: String,
+}
+
+async fn calculate_digest(req: Result<web::Json<DigestRequest>, actix_web::Error>) -> impl Responder {
+    // Handle JSON deserialization errors
+    let req = match req {
+        Ok(req) => req,
+        Err(e) => {
+            error!("Request deserialization error: {}", e);
+            return HttpResponse::BadRequest().json(ErrorResponse {
+                error: "Missing required field: url".to_string(),
+            });
+        }
+    };
+
     let client = reqwest::Client::new();
     let response = fetch_url(client, &req.url).await;
     let response = match response {
         Ok(resp) => resp,
         Err(e) => {
             error!("Failed to fetch URL {}: {}", req.url, e);
-            return web::Json(DigestResponse {
+            return HttpResponse::InternalServerError().json(DigestResponse {
                 digest_multibase: "Error fetching URL".to_string(),
             });
         }
@@ -38,7 +54,9 @@ async fn calculate_digest(req: web::Json<DigestRequest>) -> impl Responder {
         Ok(base64) => base64,
         Err(e) => {
             error!("Failed to convert multihash to base64: {}", e);
-            "Error converting multihash to base64".to_string()
+            return HttpResponse::InternalServerError().json(DigestResponse {
+                digest_multibase: "Error converting multihash to base64".to_string(),
+            });
         }
     };
 
@@ -46,7 +64,7 @@ async fn calculate_digest(req: web::Json<DigestRequest>) -> impl Responder {
         "Processed digest {} for URL: {}",
         &digest_multibase, &req.url
     );
-    web::Json(DigestResponse { digest_multibase })
+    HttpResponse::Ok().json(DigestResponse { digest_multibase })
 }
 
 async fn fetch_url(client: Client, url: &str) -> Result<String, String> {
@@ -55,6 +73,11 @@ async fn fetch_url(client: Client, url: &str) -> Result<String, String> {
         Ok(resp) => {
             let status = resp.status();
             debug!("Response status from {}: {}", url, status);
+
+            if !status.is_success() {
+                error!("HTTP error from {}: {}", url, status);
+                return Err(format!("HTTP error: {}", status));
+            }
 
             match resp.text().await {
                 Ok(text) => {

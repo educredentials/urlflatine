@@ -1,6 +1,6 @@
 [package]
 name = "urlflatine"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 description = "A web service that calculates a mubase multihash from a resource at a given URL"    
 
