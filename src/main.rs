@@ -1,4 +1,4 @@
-use actix_web::{middleware::Logger, web, App, HttpServer, Responder, HttpResponse};
+use actix_web::{middleware::Logger, web, App, HttpResponse, HttpServer, Responder};
 use cid::Cid;
 use log::{debug, error, info};
 use multihash_codetable::{Code, MultihashDigest};
@@ -23,7 +23,9 @@ struct ErrorResponse {
     error: String,
 }
 
-async fn calculate_digest(req: Result<web::Json<DigestRequest>, actix_web::Error>) -> impl Responder {
+async fn calculate_digest(
+    req: Result<web::Json<DigestRequest>, actix_web::Error>,
+) -> impl Responder {
     // Handle JSON deserialization errors
     let req = match req {
         Ok(req) => req,
