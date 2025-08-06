@@ -72,6 +72,10 @@ TODO: create a commandline runner that can be used to calculate a multibase mult
 
 4. Test the service by sending a request:  `curl -X POST http://localhost:8080/digest?url=https://example.com`
 
+## API Documentation
+
+See [openapi.yaml](openapi.yaml) file for the API specification.
+
 ### Install
 
 TODO

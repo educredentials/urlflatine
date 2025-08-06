@@ -1,0 +1,70 @@
+openapi: 3.1.0
+info:
+  title: URLflatine API
+  description: |
+    API service for calculating content digests from URLs.
+    The service fetches the content from a provided URL and generates a SHA-256 digest
+    encoded as a multibase (base64) string.
+  version: 1.0.0
+  contact:
+    name: https://github.com/educredentials/urlflatine/
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+  - url: http://{host}:{port}
+    description: Configurable server
+    variables:
+      host:
+        default: "127.0.0.1"
+        description: Host address (configurable via LISTEN_HOST environment variable)
+      port:
+        default: "8080"
+        description: Port number (configurable via LISTEN_PORT environment variable)
+
+paths:
+  /digest:
+    post:
+      summary: Calculate content digest for a URL
+      description: |
+        Fetches content from the provided URL and calculates a SHA-256 digest,
+        returning it as a multibase (base64) encoded string.
+      operationId: calculateDigest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DigestRequest'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DigestResponse'
+        '400':
+          description: Invalid request
+        '500':
+          description: Server error
+
+components:
+  schemas:
+    DigestRequest:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+          format: uri
+          description: The URL to fetch and digest
+          example: "https://example.com/assets/video.mp4"
+    
+    DigestResponse:
+      type: object
+      properties:
+        digest_multibase:
+          type: string
+          description: The multibase (base64) encoded SHA-256 digest of the URL content
+          example: "mAVUSIKwzw1mEKrRDKGrBVWjUupo2S4rnVzQycczhig="
