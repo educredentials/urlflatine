@@ -1,0 +1,3 @@
+This is a test file for URLflatine API integration tests.
+It contains static content that will produce a predictable SHA-256 digest.
+This file is hosted by the static file server during integration tests.

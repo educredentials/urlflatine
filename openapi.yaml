@@ -36,6 +36,19 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/DigestRequest'
+            examples:
+              testFile:
+                summary: Test file example
+                value:
+                  url: "http://static-server:8000/example_asset.txt"
+              invalidRequest:
+                summary: Invalid request without url field
+                value:
+                  not_url: "This will cause a validation error"
+              nonExistentUrl:
+                summary: URL that will cause a server error
+                value:
+                  url: "http://static-server:8000/non_existing_file.txt"
       responses:
         '200':
           description: Successful operation
@@ -43,10 +56,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DigestResponse'
+              examples:
+                testFileDigest:
+                  summary: Digest of test file
+                  value:
+                    digest_multibase: "mARISIMjc3XRZRHGI4RNvA7nnRu2UOQa6LMWGrHF81IwSkeGz"
         '400':
           description: Invalid request
+          content:
+            application/json:
+              examples:
+                missingUrl:
+                  summary: Missing required url field
         '500':
           description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message describing the server error
+              examples:
+                fetchError:
+                  summary: Error fetching URL
+                  value:
+                    digest_multibase: "Error fetching URL"
 
 components:
   schemas:

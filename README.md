@@ -102,7 +102,14 @@ docker run -p 8080:8080 -e LISTEN_HOST=0.0.0.0 -e LISTEN_PORT=8080 urlflatine
 
 ### Test
 
-TODO
+Test with [dredd](https://dredd.org/) and docker. This runs the openapi.yaml file against the running service. And checks if all endpoints and responses are according to spec.
+
+cd tests
+docker compose up --build --abort-on-container-exit --exit-code-from dredd
+
+### CI
+
+TODO: Port the above "tests" to GitHub Actions with services and containers
 
 ### Release
 
