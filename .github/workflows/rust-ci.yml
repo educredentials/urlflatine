@@ -46,6 +46,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
       - name: Log in to SDP Container Registry "Harbor"
         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
         with:
@@ -56,6 +61,10 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
+      - name: Extract version from Cargo.toml
+        id: version
+        run: cargo read-manifest | jq -r '.version'
+
       - name: Build Docker image
         uses: docker/build-push-action@v4
         with:
@@ -63,4 +72,6 @@ jobs:
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: cr.surf.nl/edubadges-edubadges/edubadges/urlflatine:latest
+          tags: |
+            cr.surf.nl/edubadges-edubadges/edubadges/urlflatine:latest
+            cr.surf.nl/edubadges-edubadges/edubadges/urlflatine:${{ steps.version.outputs.version }}
