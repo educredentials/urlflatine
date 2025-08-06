@@ -41,10 +41,6 @@ and returns that.
 
 The service has only one component, which is the HTTP server. It has only one endpoint, which is the `/digest` endpoint. This endpoint accepts a URL as a query parameter and returns a multibase multihash of the resource at that URL.
 
-## OpenAPI documentation
-
-TODO: create an OpenAPI json or YAML describing the service.
-
 ## CLI
 
 TODO: create a commandline runner that can be used to calculate a multibase multihash of a url.
