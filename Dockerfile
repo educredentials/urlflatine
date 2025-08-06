@@ -1,14 +1,14 @@
 # Use cargo-chef for optimal caching
-FROM lukemathwalker/cargo-chef:latest-rust-1 as chef
+FROM lukemathwalker/cargo-chef:latest-rust-1 AS chef
 WORKDIR /app
 
 # Start with just a recipe for dependencies
-FROM chef as planner
+FROM chef AS planner
 COPY . .
 RUN cargo chef prepare --recipe-path recipe.json
 
 # Build dependencies
-FROM chef as builder
+FROM chef AS builder
 COPY --from=planner /app/recipe.json recipe.json
 # Build only dependencies to cache them
 RUN cargo chef cook --release --recipe-path recipe.json
