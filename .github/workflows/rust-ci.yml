@@ -3,6 +3,7 @@ name: Rust CI/CD
 on:
   push:
     branches: [main]
+    tags: ["*"]
   pull_request:
     branches: [main]
 
@@ -63,7 +64,17 @@ jobs:
 
       - name: Extract version from Cargo.toml
         id: version
-        run: cargo read-manifest | jq -r '.version'
+        run: echo "VERSION=$(cargo read-manifest | jq -r '.version')" >> $GITHUB_OUTPUT
+
+      - name: Get Git tag if available
+        id: git_tag
+        run: |
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            echo "GIT_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+            echo "HAS_TAG=true" >> $GITHUB_OUTPUT
+          else
+            echo "HAS_TAG=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Build Docker image
         uses: docker/build-push-action@v4
@@ -74,4 +85,5 @@ jobs:
           cache-to: type=gha,mode=max
           tags: |
             cr.surf.nl/edubadges-edubadges/edubadges/urlflatine:latest
-            cr.surf.nl/edubadges-edubadges/edubadges/urlflatine:${{ steps.version.outputs.version }}
+            cr.surf.nl/edubadges-edubadges/edubadges/urlflatine:${{ steps.version.outputs.VERSION }}
+            ${{ steps.git_tag.outputs.HAS_TAG == 'true' && format('cr.surf.nl/edubadges-edubadges/edubadges/urlflatine:{0}', steps.git_tag.outputs.GIT_TAG) || '' }}
