@@ -51,6 +51,7 @@ TODO: create a commandline runner that can be used to calculate a multibase mult
 
 ## TODO
 
+- [ ] make the API "async": return a 201 with a location header pointing to the created resource instead of a 200 with the resource.
 - [ ] create a commandline runner that can be used to calculate a multibase multihash of a url.
 - [ ] allow providing hash type and algorithms on request. e.g. `{ "hash-function": "sha3-512" }`.
 - [ ] allow providing encoding type and request. e.g. `{ "encoding-function": "base58btc" }`.
